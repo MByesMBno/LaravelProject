@@ -10,6 +10,7 @@ class aroma extends Model
 
     protected $fillable = [
         'name',
+        'tastes',
         'description',
         'price',
         'quantity',

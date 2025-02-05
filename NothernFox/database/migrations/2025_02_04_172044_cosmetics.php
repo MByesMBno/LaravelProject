@@ -12,10 +12,10 @@ return new class extends Migration
         Schema::create('cosmetics', function (Blueprint $table) {
             $table->id();
             $table->string('name'); // Название товара
+            $table->text('tastes')->nullable();
             $table->text('description')->nullable(); // Описание товара
             $table->decimal('price', 8, 2); // Цена товара
             $table->integer('quantity')->default(0); // Количество товара
-            $table->timestamps();
         });
     }
 

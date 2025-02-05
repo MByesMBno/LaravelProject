@@ -10,6 +10,7 @@ class decor extends Model
 
     protected $fillable = [
         'name',
+        'tastes',
         'description',
         'price',
         'quantity',

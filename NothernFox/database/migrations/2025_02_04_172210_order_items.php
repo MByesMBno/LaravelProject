@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('product_type'); // Тип товара (aroma, decor, cosmetic)
             $table->integer('quantity'); // Количество товара в заказе
             $table->decimal('price', 8, 2); // Цена товара на момент заказа
-            $table->timestamps();
 
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
         });
