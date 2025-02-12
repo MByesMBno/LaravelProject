@@ -6,5 +6,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/', function () {
+    return view('Hello', ['temp'=>'Hello World']);
+});
 
-Route::get('/Shop', [ShopController::class,'allData']);
