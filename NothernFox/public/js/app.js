@@ -18,4 +18,3 @@ for (let i = 0; i < selectSingle_labels.length; i++) {
     selectSingle.setAttribute('data-state', '');
   });
 }
-
