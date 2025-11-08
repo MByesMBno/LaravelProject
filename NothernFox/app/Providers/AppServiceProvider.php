@@ -47,5 +47,9 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('destroy-item', function (User $user, Item $item) {
             return $user->is_admin;
         });
+
+        Gate::define('create-category', function (User $user) {
+            return true;
+        });
     }
 }

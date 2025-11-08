@@ -1,16 +1,23 @@
 <?php
+use App\Http\Controllers\AuthControllerAPI;
 use App\Http\Controllers\CategoryControllerAPI;
 use App\Http\Controllers\CategoryImagesControllerAPI;
 use App\Http\Controllers\ItemControllerAPI;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
+Route::get('/categories',[CategoryControllerAPI::class, 'index']);
 
+//Add route for CCAPI::show()
+Route::get('/items',[ItemControllerAPI::class, 'index']);
+//Add route for ICAPI::show()
 
-Route::get('/category', [CategoryControllerAPI::class, 'index']);
-Route::get('/category/{id}', [CategoryControllerAPI::class, 'show']);
+Route::post('/login', [AuthControllerAPI::class, 'login']);
 
-Route::get('/categories_image', [CategoryImagesControllerAPI::class, 'index']);
-Route::get('/categories_image/{id}', [CategoryImagesControllerAPI::class, 'show']);
-
-Route::get('/items', [ItemControllerAPI::class, 'index']);
-Route::get('/items/{id}', [ItemControllerAPI::class, 'show']);
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::post('/create-categories',[CategoryControllerAPI::class, 'store']);
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+    Route::get('/logout', [AuthControllerAPI::class, 'logout']);
+});

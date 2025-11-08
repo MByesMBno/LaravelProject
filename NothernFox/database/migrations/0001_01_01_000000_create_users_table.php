@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('is_admin')->default(false);
             $table->timestamp('email_verified_at')->nullable()->useCurrent();
-            $table->rememberToken()->nullable();
+            $table->rememberToken();
             $table->timestamp('created_at')->useCurrent(); // Устанавливаем текущее время для created_at
             $table->timestamp('updated_at')->useCurrent();
         });

@@ -6,8 +6,12 @@ use Illuminate\Http\Request;
 
 class ItemControllerAPI extends Controller
 {
-
-    public function index()
+    public function index(Request $request)
+    {
+        $perPage = $request->perpage ?? 5;
+        return response(item::paginate($perPage));
+    }
+    public function total()
     {
         return response(item::all());
     }
