@@ -10,6 +10,8 @@ Route::get('/categories',[CategoryControllerAPI::class, 'index']);
 
 //Add route for CCAPI::show()
 Route::get('/items',[ItemControllerAPI::class, 'index']);
+Route::get('/categories/{category}',[CategoryControllerAPI::class, 'show']);
+Route::get('/categories/{category}/{item}',[ItemControllerAPI::class, 'show']);
 //Add route for ICAPI::show()
 
 Route::post('/login', [AuthControllerAPI::class, 'login']);

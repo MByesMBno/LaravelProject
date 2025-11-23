@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\category;
+use App\Models\item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use App\Models\categories_image;
@@ -11,56 +12,6 @@ use Illuminate\Support\Facades\Storage;
 use Exception;
 class CategoryControllerAPI extends Controller
 {
-
-     public function getCategoryImage($categoryId)
-    {
-        try {
-            // Находим запись об изображении категории
-            $categoryImage = categories_image::where('category_id', $categoryId)->first();
-
-            if (!$categoryImage) {
-                return response()->json([
-                    'code' => 1,
-                    'message' => 'Изображение для категории не найдено',
-                ], 404);
-            }
-
-            // Получаем путь к файлу из базы данных
-            $filePath = $categoryImage->url;
-
-            // Проверяем существование файла в Yandex Object Storage
-            if (!Storage::disk('yandex')->exists($filePath)) {
-                return response()->json([
-                    'code' => 2,
-                    'message' => 'Файл изображения не найден в хранилище',
-                ], 404);
-            }
-
-            // Получаем файл из хранилища
-            $file = Storage::disk('yandex')->get($filePath);
-            $mimeType = Storage::disk('yandex')->mimeType($filePath);
-
-            // Определяем правильный Content-Type
-            $contentType = $this->getContentType($mimeType, $filePath);
-
-            // Возвращаем изображение с правильными заголовками
-            return response($file, 200)
-                ->header('Content-Type', $contentType)
-                ->header('Content-Length', Storage::disk('yandex')->size($filePath))
-                ->header('Cache-Control', 'public, max-age=3600') // Кэширование на 1 час
-                ->header('Access-Control-Allow-Origin', '*');
-
-        } catch (\Exception $e) {
-            \Log::error('Error fetching category image: ' . $e->getMessage());
-
-            return response()->json([
-                'code' => 3,
-                'message' => 'Ошибка при получении изображения',
-            ], 500);
-        }
-    }
-
-
     public function store(Request $request)
     {
         if (!Gate::allows('create-category')) {
@@ -128,43 +79,33 @@ class CategoryControllerAPI extends Controller
         }
     }
 
-
     public function index(Request $request)
     {
-        $perPage = $request->perpage ?? 5;//использовал способ пагинации как в прошлом курсе по ларавель
-        return response(category::paginate($perPage));
+        $perPage = $request->perpage ?? 7;
+        $categories = Category::with('images')
+            ->paginate($perPage);
+
+        return response()->json($categories);
     }
 
     public function total()
     {
-        return response(category::all());
+        $categories = Category::with('image')->get();
+        return response()->json($categories);
     }
 
-    public function show(string $id)
+    public function show(Category $category)
     {
-        return response(category::find($id));
-    }
-
-    private function getContentType($mimeType, $filePath)
-    {
-        if ($mimeType) {
-            return $mimeType;
+        $categories =  item::with('images')->get();
+        $items = $category->items;
+        if (!$items) {
+            return response()->json([
+                'code' => 1,
+                'message' => 'Предметы не найден'
+            ], 404);
         }
 
-        $extension = pathinfo($filePath, PATHINFO_EXTENSION);
-
-        $mimeTypes = [
-            'jpg' => 'image/jpeg',
-            'jpeg' => 'image/jpeg',
-            'png' => 'image/png',
-            'gif' => 'image/gif',
-            'webp' => 'image/webp',
-            'svg' => 'image/svg+xml',
-        ];
-
-        return $mimeTypes[strtolower($extension)] ?? 'image/jpeg';
+        return response()->json($items);
     }
-
-
 
 }
