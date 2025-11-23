@@ -66,7 +66,7 @@ return [
             'region' => env('YANDEX_DEFAULT_REGION', 'ru-central1'),
             'bucket' => env('YANDEX_BUCKET'),
             'endpoint' => env('YANDEX_ENDPOINT', 'https://storage.yandexcloud.net'),
-            'url' => env('YANDEX_URL'), // Опционально, если вы хотите использовать CDN
+            'url' => env('YANDEX_URL'),
             'use_path_style_endpoint' => true,
     ],
     ],
